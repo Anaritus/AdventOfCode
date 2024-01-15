@@ -1,6 +1,4 @@
-#include <__errc>
 #include <array>
-#include <ios>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,7 +7,7 @@ using namespace std;
 
 bool assert_digit (char s) {
     int si = s - '0';
-    return si < 10 && si >= 0;
+    return si < 10 && si > 0;
 }
 
 struct Node{
@@ -27,19 +25,20 @@ void fill(Node *root, string s, int number) {
 }
 
 int get(Node root, string s, int start_i) {
+    if (assert_digit(s[start_i])) return s[start_i] - '0';
     Node current = root;
     for (int i = start_i; i < s.length(); i++) {
         char a = s[i];
         if (current.number) return current.number;
-        if (!current.next[a - 'a']) return 0;
+        if (assert_digit(a) || !current.next[a - 'a']) return 0;
         current = *current.next[a - 'a'];
     }
-    return 0;
+    return current.number;
 }
 
 int main() {
     ifstream fin;
-    fin.open("test.in");
+    fin.open("1.in");
 
     Node root;
     string numbers[9] = {
@@ -62,19 +61,17 @@ int main() {
     while (fin >> s) {
         int first, last;
         bool flag = true;
-        int i = 0;
         for (int i = 0; i < s.length(); i++) {
             char t = s[i];
-            cout << i;
-            if (assert_digit(t) || get(root, s, i)) {
+            int number = get(root, s, i);
+            if (number) {
                 if (flag) {
                     flag = false;
-                    first = assert_digit(t) ? t - '0' : get(root, s, i);
+                    first = number;
                 }
-                last = assert_digit(t) ? t - '0' : get(root, s, i);
+                last = number;
             }
         }
-        cout << endl << first << last << endl;
         answer += 10 * first + last;
     }
     cout << answer << endl;
