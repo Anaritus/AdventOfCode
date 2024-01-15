@@ -11,26 +11,32 @@ int main () {
 
     string s;
     int game = 0;
-    int answer;
     int color_number = 0;
-    map<char, int> checks = {
-        {'r', 12},
-        {'g', 13},
-        {'b', 14}
+    map<char, int> colors = {
+        {'r', 0},
+        {'g', 0},
+        {'b', 0}
     };
-    bool adding = false;
+    int last_number;
+    int total_power = 0;
     while (fin >> s) {
         if (s == "Game") {
-            answer += adding ? game : 0;
-            game++;
-            adding = true;
+            last_number = 0;
+            total_power += colors['r'] * colors['b'] * colors['g'];
+            colors = {
+                {'r', 0},
+                {'g', 0},
+                {'b', 0}
+            };
             continue;
         }
         if (s[s.size() - 1] == ':') continue;
-        if (checks.find(s[0]) == checks.end()) {
-            color_number = stoi(s);
+        if (colors.find(s[0]) == colors.end()) {
+            last_number = stoi(s);
+        } else if (last_number > colors[s[0]]){
+            colors[s[0]] = last_number;
         }
-        else if(checks[s[0]] < color_number) adding = false;
     }
-    cout << answer << endl;
+    total_power += colors['r'] * colors['b'] * colors['g'];
+    cout << total_power << endl;
 }
